@@ -1,9 +1,170 @@
-<!doctype html>
-<html>
-  <head>
-    <title>This is the title of the webpage!</title>
-  </head>
-  <body>
-    <p>This is an example paragraph. Anything in the <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(45deg, #8ff2a9, #defae6);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            max-width: 400px;
+            animation: fadeIn 2s ease-in-out;
+            display: none;
+        }
+        h1 {
+            color: #55cf87;
+        }
+        p {
+            font-size: 18px;
+            color: #333;
+        }
+        .balloons {
+            font-size: 50px;
+            animation: float 3s infinite ease-in-out alternate;
+        }
+        .open-button, .yes-button, .no-button, .yippee-button {
+            background-color: #55cf87;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .open-button, .yippee-button {
+            display: none;
+        }
+        .yes-button, .no-button {
+            font-size: 18px;
+            position: relative;
+        }
+        .icon-bar {
+            background-color: #55cf87;
+            border-radius: 10px;
+            padding: 10px 5px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+            display: none;
+        }
+        .icon-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="balloons">🎈🎉🎂🎁</div>
+    <div id="loveQuestion">
+        <h2 id="questionText">Do you love me? ❤️</h2>
+        <button class="yes-button" id="yesButton" onclick="handleYesClick()">Yes 💖</button>
+        <button class="no-button" id="noButton" onclick="handleNoClick()">No 💔</button>
+    </div>
+    <button class="open-button" id="openButton" onclick="openCard()">Click me to open! 🎁</button>
+    <div class="icon-bar">
+        <button class="icon-button" id="pauseButton" onclick="pauseMusic()">⏸️</button>
+        <button class="icon-button" id="playButton" onclick="playMusic()">▶️</button>
+        <button class="icon-button" id="muteButton" onclick="muteMusic()">🔇</button>
+    </div>
+    <button class="yippee-button" id="yippeeButton" onclick="triggerYippeeConfetti()">Yippee! 🎉</button>
+    <audio id="birthdayMusic">
+        <source src="Birthday-Song.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <div class="card" id="card">
+        <h1>Happy Birthday! 🎂</h1>
+        <p>Wishing you a day filled with love, laughter, and happiness! Have a fantastic year ahead. 🎊🎁</p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script>
+        let clickCount = 0;
+        function handleYesClick() {
+            if (clickCount < 0) {
+                switchPositions();
+                enlargeYesButton();
+                changeQuestionText();
+                clickCount++;
+            } else {
+                document.getElementById('loveQuestion').style.display = 'none';
+                document.getElementById('openButton').style.display = 'inline-block';
+            }
+        }
+        function handleNoClick() {
+            switchPositions();
+            enlargeYesButton();
+            changeQuestionText();
+            clickCount++;
+        }
+        function openCard() {
+            let music = document.getElementById('birthdayMusic');
+            music.play();
+            document.getElementById('card').style.display = 'block';
+            document.getElementById('openButton').style.display = 'none';
+            document.querySelector('.icon-bar').style.display = 'flex';
+            document.getElementById('yippeeButton').style.display = 'inline-block';
+            startConfetti();
+        }
+        function startConfetti() {
+            var duration = 15 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti({ ...defaults, particleCount, origin: { x: Math.random() * 0.5, y: Math.random() - 0.2 } });
+                confetti({ ...defaults, particleCount, origin: { x: 0.5 + Math.random() * 0.5, y: Math.random() - 0.2 } });
+            }, 250);
+        }
+        function triggerYippeeConfetti() {
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+            confetti({
+                angle: randomInRange(55, 125),
+                spread: randomInRange(50, 70),
+                particleCount: randomInRange(50, 100),
+                origin: { y: 0.6 }
+            });
+        }
+        function playMusic() {
+            document.getElementById('birthdayMusic').play();
+        }
+        function pauseMusic() {
+            document.getElementById('birthdayMusic').pause();
+        }
+        function muteMusic() {
+            let music = document.getElementById('birthdayMusic');
+            music.muted = !music.muted;
+        }
+    </script>
+</body>
 </html>
